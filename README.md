@@ -2,15 +2,15 @@
 
 Keep control over your photos and videos.
 
-Media Archiving is intended for anyone who wants to properly organize and archive personal media
-files: camera photos, phone galleries, videos, screenshots, downloads, app-generated images, and
-older unsorted folders.
+Media Archiving is intended for anyone who wants to properly organize and archive personal visual
+media files: camera photos, phone galleries, videos, screenshots, downloads, app-generated images,
+and older unsorted folders.
 
 The method helps keep files searchable and sortable over time by normalizing their identity:
 filenames, dates, and useful metadata. It also checks that files are still readable before they are
 archived, so problematic files can be caught before the originals are deleted.
 
-## Utils
+## Core Utils
 
 - **media-normalize**: normalize media metadata and give files consistent unique names.
 - **media-sanity-check**: check whether media files are still readable/decodable.

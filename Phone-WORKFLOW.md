@@ -1,6 +1,6 @@
 # Phone and Media Library Import Workflow
 
-This workflow is designed for phone galleries and mixed media archives: photos, videos, screenshots, downloads, app-generated images, and older unsorted media collections.
+This workflow is designed for phone galleries and media libraries: photos, videos, screenshots, downloads, app-generated images, and older unsorted media collections.
 
 1. Import media files to your computer and open a terminal there.
 

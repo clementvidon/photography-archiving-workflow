@@ -1,4 +1,4 @@
-# Camera Photographs Import Workflow
+# Camera Import Workflow
 
 > **WARNING** Do not edit the RAW before they have their final name from step 2.
 > *Generated edition files may no longer work if they are located according to the old name of the file.*
