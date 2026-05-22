@@ -25,7 +25,7 @@ media-sanity-check deep
 
 4. Select and edit the images.
 
-5. Move files to the corresponding `pCloudDrive/Camera/YYYY` directory.
+5. Move files to the corresponding `YOUR_ARCHIVE_STORAGE/Camera/YYYY` directory.
 
 Create a subdirectory named `N-name`, where `N` is the shoot number for the year, and `name` is a short descriptive slug for the shoot.
 Use `N-misc` for one-off images that don't correspond to any particular session.

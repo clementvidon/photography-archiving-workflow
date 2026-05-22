@@ -1,6 +1,6 @@
 # Media Archiving Workflow
 
-Keep control over your photos and videos.
+This project prepares media files for long-term archiving.
 
 Media Archiving is intended for anyone who wants to properly organize and archive personal visual
 media files: camera photos, phone galleries, videos, screenshots, downloads, app-generated images,
@@ -9,6 +9,9 @@ and older unsorted folders.
 The method helps keep files searchable and sortable over time by normalizing their identity:
 filenames, dates, and useful metadata. It also checks that files are still readable before they are
 archived, so problematic files can be caught before the originals are deleted.
+
+It does not create encrypted backups by itself. Once media files are normalized, checked, and sorted
+into archive storage, they can be backed up with any backup system.
 
 ## Core Utils
 
@@ -35,7 +38,7 @@ camera / phone
 → normalize names + metadata
 → integrity check
 → select / edit
-→ archive to pCloud / backup locations
+→ archive to one or more archive storage locations
 ```
 
 ## Examples
@@ -45,16 +48,16 @@ camera / phone
 * Import your camera images into `Archiving/Camera/` on your computer.
 * Run the scripts: normalize names and metadata, then check file integrity.
 * Sort and edit the shooting as needed.
-* Upload it to `YOUR_BACKUP_LOCATIONS/Camera/`, ideally multiple backup locations.
-* After the archive has been uploaded and verified, remove the files from your camera and clean up `Archiving/Camera/`.
+* Copy it to `YOUR_ARCHIVE_STORAGE/Camera/`, ideally more than one storage location.
+* After the archive has been copied, verified, and backed up as needed, remove the files from your camera and clean up `Archiving/Camera/`.
 
 ### After months of phone or mixed media files
 
 * Import your phone gallery or mixed media files into `Archiving/Phone/` on your computer.
 * Run the scripts: normalize names and metadata, then check file integrity.
 * Sort your images and videos if it was not done yet.
-* Upload it to `YOUR_BACKUP_LOCATIONS/Phone/`, ideally multiple backup locations.
-* After the archive has been uploaded and verified, remove the files from your phone or source directory and clean up `Archiving/Phone/`.
+* Copy it to `YOUR_ARCHIVE_STORAGE/Phone/`, ideally more than one storage location.
+After the archive has been copied, verified, and backed up as needed, remove the files from your phone or source directory and clean up `Archiving/Phone/`.
 
 After installation, both workflows are available in `Archiving/Camera/WORKFLOW.md` and `Archiving/Phone/WORKFLOW.md`.
 

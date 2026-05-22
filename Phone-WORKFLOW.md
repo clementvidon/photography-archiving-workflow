@@ -22,7 +22,7 @@ media-sanity-check deep
 
 4. Select the media files you want to keep (if not done before step 1).
 
-5. Move files to the corresponding `pCloudDrive/Phone/YYYY` directory.
+5. Move files to the corresponding `YOUR_ARCHIVE_STORAGE/Phone/YYYY` directory.
 
 Example:
 
