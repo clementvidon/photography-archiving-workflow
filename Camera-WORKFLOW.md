@@ -1,17 +1,11 @@
 # Camera Import Workflow
 
+This workflow is designed for controlled camera imports, organized by shooting session.
+
 > **WARNING** Do not edit the RAW before they have their final name from step 2.
 > *Generated edition files may no longer work if they are located according to the old name of the file.*
 
-Prerequisite: install the `media-normalize` and `media-sanity-check` scripts.
-
-```
-git clone https://github.com/clementvidon/media-archiving && cd media-archiving
-bash install.sh
-hash -r
-```
-
-1. Import images to computer and open a terminal there.
+1. Import camera files to your computer and open a terminal there.
 
 > **WARNING** Don't delete the images from your camera right away as a precaution.
 

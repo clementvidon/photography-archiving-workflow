@@ -1,4 +1,4 @@
-# Media Archiving
+# Media Archiving Workflow
 
 Keep control over your photos and videos.
 
@@ -61,8 +61,8 @@ After installation, both workflows are available in `Archiving/Camera/WORKFLOW.m
 ## Install
 
 ```bash
-git clone https://github.com/clementvidon/media-archiving
-cd media-archiving
+git clone https://github.com/clementvidon/media-archiving-workflow
+cd media-archiving-workflow
 bash install.sh
 hash -r
 ```
