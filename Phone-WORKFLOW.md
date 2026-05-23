@@ -1,33 +1,43 @@
-# Phone and Media Library Import Workflow
+# Phone Import Workflow
 
-This workflow is designed for phone galleries and media libraries: photos, videos, screenshots, downloads, app-generated images, and older unsorted media collections.
+This workflow is designed for phone galleries: photos, videos, screenshots, downloads, and
+app-generated images that belong to your visual archive.
 
-1. Import media files to your computer and open a terminal there.
+## 1. Import files
 
-> **WARNING** Don't delete the original files from your phone or source directory right away as a precaution.
+Import phone gallery into a local import directory.
 
-2. Clean metadata and rename files (with the `PHONE_CV` prefix here):
+> **WARNING** Don't delete the original files from your phone right away as a precaution.
+
+## 2. Normalize and check imported files
+
+Clean metadata, rename files, and check that they are readable/decodable.
+
+Open a terminal inside this import directory and run:
 
 ```bash
 media-normalize PHONE_CV
-```
-
-If files cannot be normalized, see `../FIXING-FILES.md`.
-
-3. Check integrity.
-
-```bash
 media-sanity-check deep
 ```
 
-4. Select the media files you want to keep (if not done before step 1).
+If files cannot be normalized or checked, see `../FIXING-FILES.md`.
 
-5. Move files to the corresponding `YOUR_ARCHIVE_STORAGE/Phone/YYYY` directory.
+## 3. Select and prepare archive content
 
-Example:
+Select the media files you want to keep, if this was not done before import.
 
-```
+## 4. Archive selected files
+
+Move the kept files into your phone archive storage, under the corresponding year.
+
+Archive storage can be a cloud-synced folder, an external drive, a NAS mount, or any other storage location.
+
+Phone files are organized by year:
+
+```text
 Phone
 └── 2026
-    └── CV26_0320_025038_31188070.JPG
+    ├── PHONE_CV26_0320_025038_31188070.JPG
+    ├── PHONE_CV26_0320_025039_42139002.MP4
+    └── PHONE_CV26_0321_111204_11890211.PNG
 ```

@@ -22,7 +22,7 @@ cp -f Phone-WORKFLOW.md "$archiving_dir/Phone/WORKFLOW.md"
 cp -f FIXING-FILES.md "$archiving_dir/FIXING-FILES.md"
 
 echo
-echo "Installed media archiving tools."
+echo "Installed photography archiving tools."
 echo "Scripts installed in: $HOME/.local/bin"
 echo "Working directories created in: $archiving_dir"
 echo "You can move this Archiving directory anywhere later if needed."
