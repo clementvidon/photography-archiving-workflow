@@ -54,7 +54,7 @@ It can be a cloud-synced folder, external drive, NAS mount, or any other storage
 * Run the scripts: normalize names and metadata, then check file integrity.
 * Sort and edit the shooting as needed.
 * Move the shoot directory into your camera archive storage.
-* After the archive storage has been verified and backed up as needed, remove the files from your camera and clean up `Archiving/Camera/`.
+* After the archive files have been verified and backed up as needed, remove the files from your camera and clean up `Archiving/Camera/`.
 
 ### After months of phone files
 
@@ -62,7 +62,7 @@ It can be a cloud-synced folder, external drive, NAS mount, or any other storage
 * Run the scripts: normalize names and metadata, then check file integrity.
 * Sort your images and videos if it was not done yet.
 * Move the kept files into your phone archive storage.
-* After the archive storage has been verified and backed up as needed, remove the files from your phone and clean up `Archiving/Phone/`.
+* After the archive files have been verified and backed up as needed, remove the files from your phone and clean up `Archiving/Phone/`.
 
 After installation, both workflows are available in `Archiving/Camera/WORKFLOW.md` and `Archiving/Phone/WORKFLOW.md`.
 
