@@ -5,7 +5,7 @@ app-generated images that belong to your visual archive.
 
 ## 1. Import files
 
-Import phone gallery into a local import directory.
+Import your phone gallery into a local import directory.
 
 > **WARNING** Don't delete the original files from your phone right away as a precaution.
 

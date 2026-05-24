@@ -4,12 +4,12 @@ This workflow is designed for controlled camera imports, organized by shooting s
 
 ## 1. Import files
 
-Create a local import directory named `N-name`, where `N` is the next shoot number for the archive year and `name` is a short descriptive slug.
+Create a local import directory named `MMDD-name`, where `MMDD` is the date of the first photo in the shoot and `name` is a short descriptive slug.
 
 Examples:
 
 ```text
-12-palermo-weekend
+0526-palermo-weekend
 ```
 
 Import camera files into this directory.
@@ -38,12 +38,12 @@ Keep together everything that belongs to the shoot:
 - RAW files
 - sidecar files, such as `.xmp`
 - final exported files
-- JPG-only files, when the RAW is not worth keeping but the image still has some value
+- JPG-only files, when the image does not worth keeping the RAW
 
 Recommended internal structure:
 
 ```text
-12-palermo-weekend
+0526-palermo-weekend
 ├── CV26_0320_025038_31188070.DNG
 ├── CV26_0320_025038_31188070.DNG.xmp
 ├── darktable_exported
@@ -59,7 +59,7 @@ At the end of this step, the import directory should be ready to archive.
 
 ## 4. Archive the shoot directory
 
-Move the whole `N-name` directory into your camera archive storage, under the corresponding year.
+Move the whole `MMDD-name` directory into your camera archive storage, under the corresponding year.
 
 Archive storage can be a cloud-synced folder, an external drive, a NAS mount, or any other storage location.
 
@@ -68,13 +68,10 @@ Recommended archive structure:
 ```text
 Camera
 └── 2026
-    ├── 1-misc
-    ├── 2-vertige-party
-    ├── 12-palermo-weekend
+    ├── 0424-vertige-party
+    ├── 0526-palermo-weekend
     └── TAGS.md
 ```
-
-Use `N-misc` for one-off images that do not correspond to a specific shooting session.
 
 ## 5. Update archive notes
 
@@ -83,7 +80,6 @@ Update `TAGS.md` and add a line with relevant details and keywords: people, loca
 Example:
 
 ```text
-1-misc: Family garden during the sunset.
-2-vertige-party: Masquerade party at Maxim's de Paris organized by Vertige.
-12-palermo-weekend: Short Palermo trip, street scenes, markets, waterfront, friends.
+0424-vertige-party: Masquerade party at Maxim's de Paris organized by Vertige.
+0526-palermo-weekend: Short Palermo trip, street scenes, markets, waterfront, friends.
 ```

@@ -27,7 +27,7 @@ selected, edited when needed, and then archived.
 
 There are two workflows:
 
-- `Camera`: for controlled camera imports, organized by shooting session.
+- `Camera`: for controlled camera imports, organized by dated shooting session.
 - `Phone`: for phone galleries, organized by year.
 
 While `Camera` usually has fewer formats and a lower risk of corrupted files, `Phone` can contain
