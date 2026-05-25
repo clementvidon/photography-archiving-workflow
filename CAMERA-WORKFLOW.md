@@ -20,14 +20,32 @@ Import camera files into this directory.
 
 Clean metadata, rename files, and check that they are readable/decodable.
 
-Open a terminal inside this import directory and run:
+The prefix is added at the beginning of each renamed file. I use `CV` for camera files.
+
+### Using the GUI
+
+Launch `Normalize Media` from the application menu, select the import directory, and use this prefix:
+
+```text
+CV
+```
+
+Then launch `Media Sanity Check`, select the same directory, and choose:
+
+```text
+deep
+```
+
+If files are problematic, see `FIXING-FILES.md`.
+
+### Terminal alternative
+
+Open a terminal inside the import directory and run:
 
 ```bash
 media-normalize CV
 media-sanity-check deep
 ```
-
-If files are problematic, see `FIXING-FILES.md`.
 
 ## 3. Select, edit, and organize archive content
 

@@ -13,14 +13,32 @@ Import your phone gallery into a local import directory.
 
 Clean metadata, rename files, and check that they are readable/decodable.
 
-Open a terminal inside this import directory and run:
+The prefix is added at the beginning of each renamed file. I use `PHONE_CV` for phone files, so they stay easy to distinguish from camera files.
+
+### Using the GUI
+
+Launch `Normalize Media` from the application menu, select the import directory, and use this prefix:
+
+```text
+PHONE_CV
+```
+
+Then launch `Media Sanity Check`, select the same directory, and choose:
+
+```text
+deep
+```
+
+If files are problematic, see `FIXING-FILES.md`.
+
+### Terminal alternative
+
+Open a terminal inside the import directory and run:
 
 ```bash
 media-normalize PHONE_CV
 media-sanity-check deep
 ```
-
-If files are problematic, see `FIXING-FILES.md`.
 
 ## 3. Select and organize archive content
 

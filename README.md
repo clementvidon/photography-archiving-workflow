@@ -13,8 +13,26 @@ Tested target: GNU/Linux / Ubuntu.
 
 ## Tools
 
-- **media-normalize**: normalize media metadata and rename files as `PREFIXYY_MMDD_HHMMSS_FILESIZE.EXT`.
+- **media-normalize**: normalize media metadata and rename files.
 - **media-sanity-check**: check whether media files can still be read by common media tools.
+
+## Renamed filename format
+
+`media-normalize` renames files using this pattern: `PREFIXYY_MMDD_HHMMSS_FILESIZE.EXT`
+
+Example: `CV26_0320_025038_31188070.DNG`
+
+The prefix helps identify the source or owner of the file.
+
+I use `CV` for camera files and `PHONE_CV` for phone files.
+
+This makes the archive easier to scan later: `CV` identifies my images, while `PHONE_CV` also separates phone files from camera files.
+
+The date and time come from the best available creation metadata.
+
+The file size helps reduce filename collisions when multiple files share the same timestamp, and can also help spot larger or less-compressed duplicates.
+
+You can use your own initials or naming system.
 
 ## Method
 
@@ -39,7 +57,17 @@ camera / phone
 `Phone` usually benefits more from normalization because it can contain files from many
 applications, formats, and export paths.
 
-## Install
+## Install the GUI tools
+
+Open the `gui/` directory and double-click:
+
+```text
+Install Photography Archiving Workflow
+```
+
+On Ubuntu/GNOME, you may need to right-click the launcher and choose **Allow Launching** the first time.
+
+## Install the command-line tools
 
 Install dependencies:
 
@@ -58,19 +86,29 @@ hash -r
 
 Detailed workflows are available in [`CAMERA-WORKFLOW.md`](CAMERA-WORKFLOW.md) and [`PHONE-WORKFLOW.md`](PHONE-WORKFLOW.md).
 
-## GUI usage on Ubuntu
+## Uninstall
 
-This workflow can be used without typing commands.
-
-Open the `gui/` directory and double-click:
+To uninstall from the GUI, launch:
 
 ```text
-Install Photography Archiving Workflow
+Uninstall Photography Archiving Workflow
 ```
 
-Then launch the tools from the Ubuntu application menu:
+from the Ubuntu application menu.
 
-```text
-Normalize Media
-Media Sanity Check
+To uninstall from the terminal, remove the installed tools and launchers:
+
+```bash
+rm -f "$HOME/.local/bin/media-normalize"
+rm -f "$HOME/.local/bin/media-sanity-check"
+rm -f "$HOME/.local/bin/video-reencode"
+rm -f "$HOME/.local/bin/normalize-media-gui"
+rm -f "$HOME/.local/bin/sanity-check-gui"
+rm -f "$HOME/.local/bin/uninstall-photography-archiving-workflow"
+
+rm -f "$HOME/.local/share/applications/normalize-media.desktop"
+rm -f "$HOME/.local/share/applications/media-sanity-check.desktop"
+rm -f "$HOME/.local/share/applications/uninstall-photography-archiving-workflow.desktop"
 ```
+
+This does not delete your photos, media files, archives, logs, or system packages installed with `apt`.

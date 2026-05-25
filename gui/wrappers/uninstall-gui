@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v zenity >/dev/null 2>&1; then
+  echo "zenity is required to run this GUI uninstaller." >&2
+  exit 1
+fi
+
+zenity --question \
+  --title="Uninstall Photography Archiving Workflow" \
+  --text="This will remove the installed workflow tools and application launchers from your user account.\n\nIt will not delete your photos, media files, archives, logs, or system packages installed with apt.\n\nContinue?" || exit 0
+
+rm -f "$HOME/.local/bin/media-normalize"
+rm -f "$HOME/.local/bin/media-sanity-check"
+rm -f "$HOME/.local/bin/video-reencode"
+
+rm -f "$HOME/.local/bin/normalize-media-gui"
+rm -f "$HOME/.local/bin/sanity-check-gui"
+
+rm -f "$HOME/.local/share/applications/normalize-media.desktop"
+rm -f "$HOME/.local/share/applications/media-sanity-check.desktop"
+rm -f "$HOME/.local/share/applications/uninstall-photography-archiving-workflow.desktop"
+
+if command -v update-desktop-database >/dev/null 2>&1; then
+  update-desktop-database "$HOME/.local/share/applications" >/dev/null 2>&1 || true
+fi
+
+zenity --info \
+  --title="Uninstalled" \
+  --text="Photography Archiving Workflow has been removed from your user account.\n\nSystem packages installed with apt were kept:\nexiftool, ffmpeg, dcraw, jpeginfo, pngcheck, webp, libheif-examples, zenity."
+
+rm -f "$HOME/.local/bin/uninstall-photography-archiving-workflow"
+
