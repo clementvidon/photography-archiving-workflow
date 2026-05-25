@@ -27,9 +27,9 @@ media-normalize CV
 media-sanity-check deep
 ```
 
-If files cannot be normalized or checked, see `../FIXING-FILES.md`.
+If files are problematic, see `FIXING-FILES.md`.
 
-## 3. Select, edit, and prepare archive content
+## 3. Select, edit, and organize archive content
 
 Select and edit the images.
 
@@ -38,7 +38,7 @@ Keep together everything that belongs to the shoot:
 - RAW files
 - sidecar files, such as `.xmp`
 - final exported files
-- JPG-only files, when the image does not worth keeping the RAW
+- JPG-only files, when the image has value but keeping the RAW is unnecessary
 
 Recommended internal structure:
 
@@ -46,20 +46,18 @@ Recommended internal structure:
 0526-palermo-weekend
 ├── CV26_0320_025038_31188070.DNG
 ├── CV26_0320_025038_31188070.DNG.xmp
-├── darktable_exported
+├── exported
 │   └── CV26_0320_025038_31188070.JPG
 └── jpg_only
     └── CV26_0210_034133_32988978.JPG
 ```
 
-Use `darktable_exported` for final JPGs exported from Darktable.
+Use `exported` for final exported JPGs.
 Use `jpg_only` for JPGs kept without a corresponding RAW file.
-
-At the end of this step, the import directory should be ready to archive.
 
 ## 4. Archive the shoot directory
 
-Move the whole `MMDD-name` directory into your camera archive storage, under the corresponding year.
+Move the whole local import directory to your camera archive storage, under the corresponding year.
 
 Archive storage can be a cloud-synced folder, an external drive, a NAS mount, or any other storage location.
 

@@ -1,6 +1,6 @@
 # Phone Import Workflow
 
-This workflow is designed for phone galleries: photos, videos, screenshots, downloads, and
+This workflow is designed for phone galleries: photos, videos, screenshots, downloads, and other
 app-generated images that belong to your visual archive.
 
 ## 1. Import files
@@ -20,19 +20,19 @@ media-normalize PHONE_CV
 media-sanity-check deep
 ```
 
-If files cannot be normalized or checked, see `../FIXING-FILES.md`.
+If files are problematic, see `FIXING-FILES.md`.
 
-## 3. Select and prepare archive content
+## 3. Select and organize archive content
 
-Select the media files you want to keep, if this was not done before import.
+Select the media files you want to keep, if this was not done before importing.
 
 ## 4. Archive selected files
 
-Move the kept files into your phone archive storage, under the corresponding year.
+Move the kept files from your local import directory to your phone archive storage, under the corresponding year.
 
 Archive storage can be a cloud-synced folder, an external drive, a NAS mount, or any other storage location.
 
-Phone files are organized by year:
+Recommended archive structure:
 
 ```text
 Phone
