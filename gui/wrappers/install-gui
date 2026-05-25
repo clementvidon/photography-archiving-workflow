@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
+
+if ! command -v zenity >/dev/null 2>&1; then
+  pkexec apt-get update
+  pkexec apt-get install -y zenity
+fi
+
+zenity --question \
+  --title="Install Photography Archiving Workflow" \
+  --text="This will install required Ubuntu packages and copy the workflow tools to ~/.local/bin.\n\nContinue?" || exit 0
+
+pkexec apt-get update
+
+pkexec apt-get install -y \
+  exiftool \
+  ffmpeg \
+  dcraw \
+  jpeginfo \
+  pngcheck \
+  webp \
+  libheif-examples \
+  zenity
+
+mkdir -p "$HOME/.local/bin"
+
+for file in "$repo_root/scripts/"*; do
+  [ -f "$file" ] || continue
+  install -m 755 "$file" "$HOME/.local/bin/$(basename "$file")"
+done
+
+install -m 755 "$repo_root/gui/wrappers/normalize-media-gui" "$HOME/.local/bin/normalize-media-gui"
+install -m 755 "$repo_root/gui/wrappers/sanity-check-gui" "$HOME/.local/bin/sanity-check-gui"
+
+mkdir -p "$HOME/.local/share/applications"
+
+install -m 755 "$repo_root/gui/Normalize Media.desktop" \
+  "$HOME/.local/share/applications/normalize-media.desktop"
+
+install -m 755 "$repo_root/gui/Media Sanity Check.desktop" \
+  "$HOME/.local/share/applications/media-sanity-check.desktop"
+
+zenity --info \
+  --title="Installed" \
+  --text="Photography Archiving Workflow is installed.\n\nYou can now launch:\n\n- Normalize Media\n- Media Sanity Check\n\nfrom your applications menu."

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Normalize Media
+Comment=Normalize metadata and rename media files in a selected folder
+Exec=normalize-media-gui
+Terminal=false
+Categories=Graphics;Photography;Utility;

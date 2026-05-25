@@ -57,3 +57,20 @@ hash -r
 ```
 
 Detailed workflows are available in [`CAMERA-WORKFLOW.md`](CAMERA-WORKFLOW.md) and [`PHONE-WORKFLOW.md`](PHONE-WORKFLOW.md).
+
+## GUI usage on Ubuntu
+
+This workflow can be used without typing commands.
+
+Open the `gui/` directory and double-click:
+
+```text
+Install Photography Archiving Workflow
+```
+
+Then launch the tools from the Ubuntu application menu:
+
+```text
+Normalize Media
+Media Sanity Check
+```

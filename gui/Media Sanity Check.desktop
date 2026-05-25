@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Media Sanity Check
+Comment=Check whether media files are readable
+Exec=sanity-check-gui
+Terminal=false
+Categories=Graphics;Photography;Utility;
