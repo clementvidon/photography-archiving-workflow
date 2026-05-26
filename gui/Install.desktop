@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Install Photography Archiving Workflow
-Comment=Install dependencies and desktop tools
-Exec=bash -c 'cd "$(dirname "%k")" && ./wrappers/install-gui'
-Terminal=false
-Categories=Utility;

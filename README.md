@@ -42,7 +42,7 @@ This can be a cloud-synced folder, external drive, NAS mount, or any other place
 
 There are two workflows:
 
-- [`Camera`](CAMERA-WORKFLOW.md): for controlled camera imports, organized by dated shooting session.
+- [`Camera`](CAMERA-WORKFLOW.md): for camera rolls, organized by dated shooting session.
 - [`Phone`](PHONE-WORKFLOW.md): for phone galleries, organized by year.
 
 ```text
@@ -57,17 +57,7 @@ camera / phone
 `Phone` usually benefits more from normalization because it can contain files from many
 applications, formats, and export paths.
 
-## Install the GUI tools
-
-Open the `gui/` directory and double-click:
-
-```text
-Install Photography Archiving Workflow
-```
-
-On Ubuntu/GNOME, you may need to right-click the launcher and choose **Allow Launching** the first time.
-
-## Install the command-line tools
+## Install the CLI tools
 
 Install dependencies:
 
@@ -84,31 +74,13 @@ bash install.sh
 hash -r
 ```
 
+Make sure `~/.local/bin` is in your `PATH`.
+
 Detailed workflows are available in [`CAMERA-WORKFLOW.md`](CAMERA-WORKFLOW.md) and [`PHONE-WORKFLOW.md`](PHONE-WORKFLOW.md).
 
-## Uninstall
-
-To uninstall from the GUI, launch:
-
-```text
-Uninstall Photography Archiving Workflow
-```
-
-from the Ubuntu application menu.
-
-To uninstall from the terminal, remove the installed tools and launchers:
+## Uninstall the CLI tools
 
 ```bash
-rm -f "$HOME/.local/bin/media-normalize"
-rm -f "$HOME/.local/bin/media-sanity-check"
-rm -f "$HOME/.local/bin/video-reencode"
-rm -f "$HOME/.local/bin/normalize-media-gui"
-rm -f "$HOME/.local/bin/sanity-check-gui"
-rm -f "$HOME/.local/bin/uninstall-photography-archiving-workflow"
-
-rm -f "$HOME/.local/share/applications/normalize-media.desktop"
-rm -f "$HOME/.local/share/applications/media-sanity-check.desktop"
-rm -f "$HOME/.local/share/applications/uninstall-photography-archiving-workflow.desktop"
+cd photography-archiving-workflow
+bash uninstall.sh
 ```
-
-This does not delete your photos, media files, archives, logs, or system packages installed with `apt`.

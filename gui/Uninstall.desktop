@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Uninstall Photography Archiving Workflow
-Comment=Remove installed workflow tools and desktop launchers
-Exec=bash -c 'cd "$(dirname "%k")" && ./wrappers/uninstall-gui'
-Terminal=false
-Categories=Utility;
