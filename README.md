@@ -18,21 +18,37 @@ Tested target: GNU/Linux / Ubuntu. And soon, macOS with Homebrew.
 
 ## Renamed filename format
 
-`media-normalize` renames files using this pattern: `PREFIXYY_MMDD_HHMMSS_FILESIZE.EXT`
+`media-normalize` renames files using this pattern:
 
-Example: `CV26_0320_025038_31188070.DNG`
+```text
+PREFIXYY_MMDD_HHMMSS_FILESIZE.EXT
+```
 
-The prefix helps identify the source or owner of the file.
+Where `PREFIX` follows this convention:
 
-I use `CV` for camera files and `PHONE_CV` for phone files.
+```text
+SOURCE_OWNER
+```
 
-This makes the archive easier to scan later: `CV` identifies my images, while `PHONE_CV` also separates phone files from camera files.
+Example:
+
+```text
+CAMERA_CV26_0320_025038_31188070.DNG
+```
+
+The prefix helps identify the source and owner of the file.
+
+I use `CAMERA_CV` for camera files and `PHONE_CV` for phone files.
+
+This makes the archive easier to scan later: `CAMERA` and `PHONE` identify the source, while `CV`
+identifies my files.
 
 The date and time come from the best available creation metadata.
 
-The file size helps reduce filename collisions when multiple files share the same timestamp, and can also help spot larger or less-compressed duplicates.
+The file size helps reduce filename collisions when multiple files share the same timestamp, and can
+also help spot larger or less-compressed duplicates.
 
-You can use your own initials or naming system.
+You can use your own source names, initials, or naming system.
 
 ## Method
 

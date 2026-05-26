@@ -20,13 +20,13 @@ media-normalize PHONE_CV
 media-sanity-check deep
 ```
 
-I use `PHONE_CV` prefix for phone files, so they stay easy to distinguish from camera files.
+I use `PHONE_CV` prefix for camera files.
 
 If files are problematic, see `FIXING-FILES.md`.
 
 ## 3. Select and organize archive content
 
-Select the media files you want to keep, if this was not done before importing.
+Select the files you want to keep, if this was not done before importing.
 
 ## 4. Archive selected files
 

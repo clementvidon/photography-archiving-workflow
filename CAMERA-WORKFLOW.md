@@ -23,11 +23,11 @@ Clean metadata, rename files, and check that they are readable/decodable.
 Open a terminal inside the import directory and run:
 
 ```bash
-media-normalize CV
+media-normalize CAMERA_CV
 media-sanity-check deep
 ```
 
-I use `CV` prefix for camera files.
+I use `CAMERA_CV` prefix for camera files.
 
 If files are problematic, see `FIXING-FILES.md`.
 
@@ -46,12 +46,12 @@ Recommended internal structure:
 
 ```text
 0526-palermo-weekend
-├── CV26_0320_025038_31188070.DNG
-├── CV26_0320_025038_31188070.DNG.xmp
+├── CAMERA_CV26_0320_025038_31188070.DNG
+├── CAMERA_CV26_0320_025038_31188070.DNG.xmp
 ├── exported
-│   └── CV26_0320_025038_31188070.JPG
+│   └── CAMERA_CV26_0320_025038_31188070.JPG
 └── jpg_only
-    └── CV26_0210_034133_32988978.JPG
+    └── CAMERA_CV26_0210_034133_32988978.JPG
 ```
 
 Use `exported` for final exported JPGs.
@@ -69,17 +69,22 @@ Recommended archive structure:
 Camera
 └── 2026
     ├── 0424-vertige-party
-    ├── 0526-palermo-weekend
-    └── TAGS.md
+    └── 0526-palermo-weekend
 ```
 
-## 5. Update archive notes
+## 5. Optionally add shoot notes
 
-Update `TAGS.md` and add a line with relevant details and keywords: people, locations, context, and project notes.
+Optionally add a `README.md` file inside the shoot directory with context and keywords.
+
+This keeps the shoot understandable on its own, even if the directory is moved, copied, or browsed outside a photo app.
 
 Example:
 
 ```text
-0424-vertige-party: Masquerade party at Maxim's de Paris organized by Vertige.
-0526-palermo-weekend: Short Palermo trip, street scenes, markets, waterfront, friends.
+# 0526-palermo-weekend
+
+Short Palermo trip.
+
+Keywords:
+Palermo, Sicily, street scenes, markets, waterfront, friends, travel, reportage
 ```
