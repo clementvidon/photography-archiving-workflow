@@ -9,7 +9,7 @@ screenshots, and other visual files that belong to a photographic archive.
 The method normalizes filenames, dates, and useful metadata, then checks that files are still
 readable before the originals are deleted.
 
-Tested target: GNU/Linux / Ubuntu.
+Tested target: GNU/Linux / Ubuntu. And soon, macOS with Homebrew.
 
 ## Tools
 
