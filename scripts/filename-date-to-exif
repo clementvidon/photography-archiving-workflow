@@ -1,0 +1,352 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat >&2 <<'EOF'
+Usage:
+  filename-date-to-exif --pattern="PATTERN" [--default-date=DATE] FILE...
+
+Description:
+  Extract a real date/time from filenames and write EXIF DateTimeOriginal.
+
+Pattern tokens:
+  YYYY  4-digit year, for example 2026
+  YY    2-digit year, for example 26 -> 2026
+  MM    2-digit month, for example 03
+  DD    2-digit day, for example 02
+  hh    2-digit hour, for example 14
+  mm    2-digit minute, for example 30
+  ss    2-digit second, for example 59
+  *     Ignore exactly one character
+
+Default date:
+  --default-date=YYYY              -> YYYY:01:01 01:01:01
+  --default-date=YYYYMM            -> YYYY:MM:01 01:01:01
+  --default-date=YYYYMMDD          -> YYYY:MM:DD 01:01:01
+  --default-date=YYYYMMDDhh        -> YYYY:MM:DD hh:01:01
+  --default-date=YYYYMMDDhhmm      -> YYYY:MM:DD hh:mm:01
+  --default-date=YYYYMMDDhhmmss    -> YYYY:MM:DD hh:mm:ss
+
+If --default-date is omitted:
+  00010101010101 is used.
+
+Examples:
+  filename-date-to-exif --pattern="YYYY********MM*DD" 2026_clement_03-02.jpg
+    -> 2026:03:02 01:01:01
+
+  filename-date-to-exif --pattern="YY********MM*DD" 26_clement_03-02.jpg
+    -> 2026:03:02 01:01:01
+
+  filename-date-to-exif --pattern="YYYY-MM-DD_hh-mm-ss" 2026-03-02_14-30-59.jpg
+    -> 2026:03:02 14:30:59
+
+  filename-date-to-exif --pattern="YYYY********MM*DD" --default-date=00010101000000 2026_clement_03-02.jpg
+    -> 2026:03:02 00:00:00
+EOF
+}
+
+shell_quote() {
+  printf "'%s'" "$(printf "%s" "$1" | sed "s/'/'\\\\''/g")"
+}
+
+pattern_has() {
+  local pattern="$1"
+  local token="$2"
+
+  [[ "$pattern" == *"$token"* ]]
+}
+
+extract_field() {
+  local filename="$1"
+  local pattern="$2"
+  local token="$3"
+  local token_len="${#token}"
+  local i=0
+
+  while [ "$i" -le "$((${#pattern} - token_len))" ]; do
+    if [ "${pattern:i:token_len}" = "$token" ]; then
+      printf "%s" "${filename:i:token_len}"
+      return 0
+    fi
+
+    i=$((i + 1))
+  done
+
+  printf ""
+}
+
+validate_digits() {
+  local label="$1"
+  local value="$2"
+  local len="$3"
+  local source="$4"
+
+  if ! [[ "$value" =~ ^[0-9]+$ ]] || [ "${#value}" -ne "$len" ]; then
+    echo "Error: invalid $label value in '$source': '$value'" >&2
+    echo "$label must contain exactly $len digit(s)." >&2
+    exit 1
+  fi
+}
+
+validate_range() {
+  local label="$1"
+  local value="$2"
+  local min="$3"
+  local max="$4"
+  local source="$5"
+
+  if [ "$value" -lt "$min" ] || [ "$value" -gt "$max" ]; then
+    echo "Error: invalid $label value in '$source': '$value'" >&2
+    echo "$label must be between $min and $max." >&2
+    exit 1
+  fi
+}
+
+validate_datetime_parts() {
+  local source="$1"
+
+  validate_digits "YYYY" "$default_year" 4 "$source"
+  validate_digits "MM" "$default_month" 2 "$source"
+  validate_digits "DD" "$default_day" 2 "$source"
+  validate_digits "hh" "$default_hour" 2 "$source"
+  validate_digits "mm" "$default_minute" 2 "$source"
+  validate_digits "ss" "$default_second" 2 "$source"
+
+  validate_range "MM" "$default_month" 1 12 "$source"
+  validate_range "DD" "$default_day" 1 31 "$source"
+  validate_range "hh" "$default_hour" 0 23 "$source"
+  validate_range "mm" "$default_minute" 0 59 "$source"
+  validate_range "ss" "$default_second" 0 59 "$source"
+}
+
+parse_default_date() {
+  local input="$1"
+
+  if ! [[ "$input" =~ ^[0-9]+$ ]]; then
+    echo "Error: --default-date must contain digits only: '$input'" >&2
+    exit 1
+  fi
+
+  case "${#input}" in
+    4|6|8|10|12|14)
+      ;;
+    *)
+      echo "Error: invalid --default-date length: ${#input}" >&2
+      echo "Expected one of: YYYY, YYYYMM, YYYYMMDD, YYYYMMDDhh, YYYYMMDDhhmm, YYYYMMDDhhmmss" >&2
+      exit 1
+      ;;
+  esac
+
+  default_year="${input:0:4}"
+  default_month="01"
+  default_day="01"
+  default_hour="01"
+  default_minute="01"
+  default_second="01"
+
+  if [ "${#input}" -ge 6 ]; then
+    default_month="${input:4:2}"
+  fi
+
+  if [ "${#input}" -ge 8 ]; then
+    default_day="${input:6:2}"
+  fi
+
+  if [ "${#input}" -ge 10 ]; then
+    default_hour="${input:8:2}"
+  fi
+
+  if [ "${#input}" -ge 12 ]; then
+    default_minute="${input:10:2}"
+  fi
+
+  if [ "${#input}" -ge 14 ]; then
+    default_second="${input:12:2}"
+  fi
+
+  validate_datetime_parts "--default-date"
+}
+
+pattern=""
+default_date="00010101010101"
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --pattern=*)
+      pattern="${1#--pattern=}"
+      shift
+      ;;
+    --pattern)
+      echo "Error: use --pattern=\"PATTERN\"" >&2
+      usage
+      exit 1
+      ;;
+    --default-date=*)
+      default_date="${1#--default-date=}"
+      shift
+      ;;
+    --default-date)
+      echo "Error: use --default-date=YYYYMMDDhhmmss" >&2
+      usage
+      exit 1
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    -*)
+      echo "Error: unknown option: $1" >&2
+      usage
+      exit 1
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+if [ -z "$pattern" ]; then
+  echo "Error: missing --pattern" >&2
+  usage
+  exit 1
+fi
+
+if [ "$#" -eq 0 ]; then
+  echo "Error: missing file(s)" >&2
+  usage
+  exit 1
+fi
+
+if ! command -v exiftool >/dev/null 2>&1; then
+  echo "Error: exiftool is required but not installed." >&2
+  echo "Install it with: sudo apt install libimage-exiftool-perl" >&2
+  exit 1
+fi
+
+parse_default_date "$default_date"
+
+undo_script="/tmp/filename-date-to-exif-undo-$(date +%Y%m%d-%H%M%S).sh"
+
+cat > "$undo_script" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v exiftool >/dev/null 2>&1; then
+  echo "Error: exiftool is required but not installed." >&2
+  exit 1
+fi
+
+EOF
+
+changed_count=0
+
+for file in "$@"; do
+  if [ ! -f "$file" ]; then
+    echo "Error: not a file: $file" >&2
+    exit 1
+  fi
+
+  base="$(basename "$file")"
+  name="${base%.*}"
+
+  if [ "${#name}" -lt "${#pattern}" ]; then
+    echo "Error: filename is shorter than pattern: $base" >&2
+    echo "Filename without extension: $name" >&2
+    echo "Pattern:                    $pattern" >&2
+    exit 1
+  fi
+
+  if pattern_has "$pattern" "YYYY"; then
+    year="$(extract_field "$name" "$pattern" "YYYY")"
+    validate_digits "YYYY" "$year" 4 "$file"
+  elif pattern_has "$pattern" "YY"; then
+    yy="$(extract_field "$name" "$pattern" "YY")"
+    validate_digits "YY" "$yy" 2 "$file"
+    year="20$yy"
+  else
+    year="$default_year"
+  fi
+
+  if pattern_has "$pattern" "MM"; then
+    month="$(extract_field "$name" "$pattern" "MM")"
+  else
+    month="$default_month"
+  fi
+
+  if pattern_has "$pattern" "DD"; then
+    day="$(extract_field "$name" "$pattern" "DD")"
+  else
+    day="$default_day"
+  fi
+
+  if pattern_has "$pattern" "hh"; then
+    hour="$(extract_field "$name" "$pattern" "hh")"
+  else
+    hour="$default_hour"
+  fi
+
+  if pattern_has "$pattern" "mm"; then
+    minute="$(extract_field "$name" "$pattern" "mm")"
+  else
+    minute="$default_minute"
+  fi
+
+  if pattern_has "$pattern" "ss"; then
+    second="$(extract_field "$name" "$pattern" "ss")"
+  else
+    second="$default_second"
+  fi
+
+  validate_digits "MM" "$month" 2 "$file"
+  validate_digits "DD" "$day" 2 "$file"
+  validate_digits "hh" "$hour" 2 "$file"
+  validate_digits "mm" "$minute" 2 "$file"
+  validate_digits "ss" "$second" 2 "$file"
+
+  validate_range "MM" "$month" 1 12 "$file"
+  validate_range "DD" "$day" 1 31 "$file"
+  validate_range "hh" "$hour" 0 23 "$file"
+  validate_range "mm" "$minute" 0 59 "$file"
+  validate_range "ss" "$second" 0 59 "$file"
+
+  new_datetime="$year:$month:$day $hour:$minute:$second"
+  old_datetime="$(exiftool -s3 -DateTimeOriginal "$file" || true)"
+
+  if [ -z "$old_datetime" ]; then
+    old_display="<empty>"
+  else
+    old_display="$old_datetime"
+  fi
+
+  echo "$file"
+  echo "  DateTimeOriginal: $old_display -> $new_datetime"
+
+  if [ -z "$old_datetime" ]; then
+    {
+      printf "exiftool -overwrite_original -DateTimeOriginal= "
+      shell_quote "$file"
+      printf " >/dev/null\n"
+    } >> "$undo_script"
+  else
+    {
+      printf "exiftool -overwrite_original "
+      shell_quote "-DateTimeOriginal=$old_datetime"
+      printf " "
+      shell_quote "$file"
+      printf " >/dev/null\n"
+    } >> "$undo_script"
+  fi
+
+  exiftool -overwrite_original "-DateTimeOriginal=$new_datetime" "$file" >/dev/null
+  changed_count=$((changed_count + 1))
+done
+
+chmod +x "$undo_script"
+
+echo
+echo "Done. Updated $changed_count file(s)."
+echo "Undo script created:"
+echo "  $undo_script"
+echo
+echo "To undo this run:"
+echo "  $undo_script"

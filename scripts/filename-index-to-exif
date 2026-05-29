@@ -1,0 +1,351 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat >&2 <<'EOF'
+Usage:
+  filename-index-to-exif --pattern="PATTERN" --date=DATE FILE...
+
+Description:
+  Extract a numeric order/index from filenames using N, then write EXIF DateTimeOriginal
+  by adding the numeric offset as seconds.
+
+Pattern tokens:
+  N     Read the numeric index starting at this position
+  *     Move forward by exactly one character
+
+Everything after the numeric index is ignored.
+
+Date syntax:
+  --date=YYYY              -> YYYY:01:01 00:00:00
+  --date=YYYYMM            -> YYYY:MM:01 00:00:00
+  --date=YYYYMMDD          -> YYYY:MM:DD 00:00:00
+  --date=YYYYMMDDhh        -> YYYY:MM:DD hh:00:00
+  --date=YYYYMMDDhhmm      -> YYYY:MM:DD hh:mm:00
+  --date=YYYYMMDDhhmmss    -> YYYY:MM:DD hh:mm:ss
+
+Examples:
+  filename-index-to-exif --pattern="N" --date=20230503 01.jpg 02.jpg 03.jpg
+
+    01.jpg -> 2023:05:03 00:00:00
+    02.jpg -> 2023:05:03 00:00:01
+    03.jpg -> 2023:05:03 00:00:02
+
+  filename-index-to-exif --pattern="****N" --date=202305031430 IMG_3801.jpg IMG_3802.jpg
+
+    IMG_3801.jpg -> 2023:05:03 14:30:00
+    IMG_3802.jpg -> 2023:05:03 14:30:01
+
+  filename-index-to-exif --pattern="******N" --date=20230503 photo_0001_ok.jpg photo_0002_ok.jpg
+
+    photo_0001_ok.jpg -> 2023:05:03 00:00:00
+    photo_0002_ok.jpg -> 2023:05:03 00:00:01
+EOF
+}
+
+shell_quote() {
+  printf "'%s'" "$(printf "%s" "$1" | sed "s/'/'\\\\''/g")"
+}
+
+validate_digits() {
+  local label="$1"
+  local value="$2"
+  local len="$3"
+
+  if ! [[ "$value" =~ ^[0-9]+$ ]] || [ "${#value}" -ne "$len" ]; then
+    echo "Error: invalid $label value: '$value'" >&2
+    echo "$label must contain exactly $len digit(s)." >&2
+    exit 1
+  fi
+}
+
+validate_range() {
+  local label="$1"
+  local value="$2"
+  local min="$3"
+  local max="$4"
+
+  if [ "$value" -lt "$min" ] || [ "$value" -gt "$max" ]; then
+    echo "Error: invalid $label value: '$value'" >&2
+    echo "$label must be between $min and $max." >&2
+    exit 1
+  fi
+}
+
+parse_date() {
+  local input="$1"
+
+  if ! [[ "$input" =~ ^[0-9]+$ ]]; then
+    echo "Error: --date must contain digits only: '$input'" >&2
+    exit 1
+  fi
+
+  case "${#input}" in
+    4|6|8|10|12|14)
+      ;;
+    *)
+      echo "Error: invalid --date length: ${#input}" >&2
+      echo "Expected one of: YYYY, YYYYMM, YYYYMMDD, YYYYMMDDhh, YYYYMMDDhhmm, YYYYMMDDhhmmss" >&2
+      exit 1
+      ;;
+  esac
+
+  year="${input:0:4}"
+  month="01"
+  day="01"
+  hour="00"
+  minute="00"
+  second="00"
+
+  if [ "${#input}" -ge 6 ]; then
+    month="${input:4:2}"
+  fi
+
+  if [ "${#input}" -ge 8 ]; then
+    day="${input:6:2}"
+  fi
+
+  if [ "${#input}" -ge 10 ]; then
+    hour="${input:8:2}"
+  fi
+
+  if [ "${#input}" -ge 12 ]; then
+    minute="${input:10:2}"
+  fi
+
+  if [ "${#input}" -ge 14 ]; then
+    second="${input:12:2}"
+  fi
+
+  validate_digits "YYYY" "$year" 4
+  validate_digits "MM" "$month" 2
+  validate_digits "DD" "$day" 2
+  validate_digits "hh" "$hour" 2
+  validate_digits "mm" "$minute" 2
+  validate_digits "ss" "$second" 2
+
+  validate_range "MM" "$month" 1 12
+  validate_range "DD" "$day" 1 31
+  validate_range "hh" "$hour" 0 23
+  validate_range "mm" "$minute" 0 59
+  validate_range "ss" "$second" 0 59
+}
+
+validate_pattern() {
+  local pattern="$1"
+
+  if [ -z "$pattern" ]; then
+    echo "Error: empty pattern" >&2
+    exit 1
+  fi
+
+  if [[ "$pattern" != *N* ]]; then
+    echo "Error: pattern must contain exactly one N token." >&2
+    exit 1
+  fi
+
+  if [[ "${pattern//[^N]/}" != "N" ]]; then
+    echo "Error: pattern must contain exactly one N token." >&2
+    exit 1
+  fi
+
+  if [[ ! "$pattern" =~ ^\**N$ ]]; then
+    echo "Error: pattern may only contain '*' before a final N." >&2
+    echo "Examples: N, ****N, ******N" >&2
+    exit 1
+  fi
+}
+
+extract_index() {
+  local filename="$1"
+  local pattern="$2"
+  local prefix="${pattern%%N*}"
+  local n_pos="${#prefix}"
+  local rest=""
+
+  if [ "${#filename}" -le "$n_pos" ]; then
+    printf ""
+    return 0
+  fi
+
+  rest="${filename:n_pos}"
+
+  if [[ "$rest" =~ ^([0-9]+) ]]; then
+    printf "%s" "${BASH_REMATCH[1]}"
+  else
+    printf ""
+  fi
+}
+
+pattern=""
+date_input=""
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --pattern=*)
+      pattern="${1#--pattern=}"
+      shift
+      ;;
+    --pattern)
+      echo "Error: use --pattern=\"PATTERN\"" >&2
+      usage
+      exit 1
+      ;;
+    --date=*)
+      date_input="${1#--date=}"
+      shift
+      ;;
+    --date)
+      echo "Error: use --date=YYYYMMDDhhmmss" >&2
+      usage
+      exit 1
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    -*)
+      echo "Error: unknown option: $1" >&2
+      usage
+      exit 1
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+if [ -z "$pattern" ]; then
+  echo "Error: missing --pattern" >&2
+  usage
+  exit 1
+fi
+
+if [ -z "$date_input" ]; then
+  echo "Error: missing --date" >&2
+  usage
+  exit 1
+fi
+
+if [ "$#" -eq 0 ]; then
+  echo "Error: missing file(s)" >&2
+  usage
+  exit 1
+fi
+
+if ! command -v exiftool >/dev/null 2>&1; then
+  echo "Error: exiftool is required but not installed." >&2
+  echo "Install it with: sudo apt install libimage-exiftool-perl" >&2
+  exit 1
+fi
+
+if ! date -d "2000-01-01 00:00:00" "+%Y:%m:%d %H:%M:%S" >/dev/null 2>&1; then
+  echo "Error: this script requires GNU date." >&2
+  echo "On Ubuntu, GNU date is available by default." >&2
+  exit 1
+fi
+
+validate_pattern "$pattern"
+parse_date "$date_input"
+
+base_datetime="$year-$month-$day $hour:$minute:$second"
+base_epoch="$(date -d "$base_datetime" "+%s")"
+
+tmp_indexes="$(mktemp)"
+trap 'rm -f "$tmp_indexes"' EXIT
+
+min_index=""
+
+for file in "$@"; do
+  if [ ! -f "$file" ]; then
+    echo "Error: not a file: $file" >&2
+    exit 1
+  fi
+
+  base="$(basename "$file")"
+  name="${base%.*}"
+
+  index="$(extract_index "$name" "$pattern")"
+
+  if [ -z "$index" ]; then
+    echo "Error: pattern does not find a numeric index in filename: $base" >&2
+    echo "Filename without extension: $name" >&2
+    echo "Pattern:                    $pattern" >&2
+    exit 1
+  fi
+
+  index_num="$((10#$index))"
+
+  if [ -z "$min_index" ] || [ "$index_num" -lt "$min_index" ]; then
+    min_index="$index_num"
+  fi
+
+  printf "%s\t%s\n" "$index_num" "$file" >> "$tmp_indexes"
+done
+
+undo_script="/tmp/filename-index-to-exif-undo-$(date +%Y%m%d-%H%M%S).sh"
+
+cat > "$undo_script" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v exiftool >/dev/null 2>&1; then
+  echo "Error: exiftool is required but not installed." >&2
+  exit 1
+fi
+
+EOF
+
+changed_count=0
+
+while IFS=$'\t' read -r index_num file; do
+  offset=$((index_num - min_index))
+  new_epoch=$((base_epoch + offset))
+  new_datetime="$(date -d "@$new_epoch" "+%Y:%m:%d %H:%M:%S")"
+
+  old_datetime="$(exiftool -s3 -DateTimeOriginal "$file" || true)"
+
+  if [ -z "$old_datetime" ]; then
+    old_display="<empty>"
+  else
+    old_display="$old_datetime"
+  fi
+
+  echo "$file"
+  echo "  N: $index_num"
+  echo "  Offset: +${offset}s"
+  echo "  DateTimeOriginal: $old_display -> $new_datetime"
+
+  if [ -z "$old_datetime" ]; then
+    {
+      printf "exiftool -overwrite_original -DateTimeOriginal= "
+      shell_quote "$file"
+      printf " >/dev/null\n"
+    } >> "$undo_script"
+  else
+    {
+      printf "exiftool -overwrite_original "
+      shell_quote "-DateTimeOriginal=$old_datetime"
+      printf " "
+      shell_quote "$file"
+      printf " >/dev/null\n"
+    } >> "$undo_script"
+  fi
+
+  exiftool -overwrite_original "-DateTimeOriginal=$new_datetime" "$file" >/dev/null
+  changed_count=$((changed_count + 1))
+done < "$tmp_indexes"
+
+chmod +x "$undo_script"
+
+echo
+echo "Done. Updated $changed_count file(s)."
+echo "Base DateTimeOriginal:"
+echo "  $(date -d "@$base_epoch" "+%Y:%m:%d %H:%M:%S")"
+echo "Smallest N:"
+echo "  $min_index"
+echo "Undo script created:"
+echo "  $undo_script"
+echo
+echo "To undo this run:"
+echo "  $undo_script"
