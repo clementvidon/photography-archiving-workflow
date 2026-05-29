@@ -9,7 +9,9 @@ screenshots, and other visual files that belong to a photographic archive.
 The method normalizes filenames, dates, and useful metadata, then checks that files are still
 readable before the originals are deleted.
 
-Tested target: GNU/Linux / Ubuntu. And soon, macOS with Homebrew.
+For the reasoning behind this workflow, read: [A Living Photographic Archive](https://cvidon.com/writing/a-living-photographic-archive/).
+
+Tested on GNU/Linux / Ubuntu for now. Only a few adjustments should be needed to make the workflow compatible with macOS.
 
 ## Tools
 
@@ -58,8 +60,8 @@ This can be a cloud-synced folder, external drive, NAS mount, or any other place
 
 There are two workflows:
 
-- [`Camera`](CAMERA-WORKFLOW.md): for camera rolls, organized by dated shooting session.
-- [`Phone`](PHONE-WORKFLOW.md): for phone galleries, organized by year.
+- [`Camera`](CAMERA-WORKFLOW.md): for controlled camera imports, usually organized by dated shooting session.
+- [`Phone`](PHONE-WORKFLOW.md): for phone galleries and app-generated visual files, usually organized by year.
 
 ```text
 camera / phone
@@ -69,6 +71,9 @@ camera / phone
 → select / edit
 → archive storage
 ```
+
+The normalized filename is the stable baseline. The folder structure can stay simple or become more
+specific depending on the archive.
 
 `Phone` usually benefits more from normalization because it can contain files from many
 applications, formats, and export paths.

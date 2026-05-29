@@ -20,7 +20,7 @@ media-normalize PHONE_CV
 media-sanity-check deep
 ```
 
-I use `PHONE_CV` prefix for camera files.
+I use `PHONE_CV` prefix for phone files.
 
 If files are problematic, see `FIXING-FILES.md`.
 
@@ -30,11 +30,11 @@ Select the files you want to keep, if this was not done before importing.
 
 ## 4. Archive selected files
 
-Move the kept files from your local import directory to your phone archive storage, under the corresponding year.
+Move the kept files from your local import directory to your phone archive storage.
 
 Archive storage can be a cloud-synced folder, an external drive, a NAS mount, or any other storage location.
 
-Recommended archive structure:
+The simplest structure is year-based:
 
 ```text
 Phone
@@ -43,3 +43,18 @@ Phone
     ├── PHONE_CV26_0320_025039_42139002.MP4
     └── PHONE_CV26_0321_111204_11890211.PNG
 ```
+
+If the archive becomes too dense, keep the same `PHONE_CV` source prefix and refine the folder structure by use:
+
+```text
+Phone
+└── 2026
+    ├── photos
+    │   └── PHONE_CV26_0320_025038_31188070.JPG
+    ├── videos
+    │   └── PHONE_CV26_0320_025039_42139002.MP4
+    └── memories
+        └── PHONE_CV26_0321_111204_11890211.PNG
+```
+
+The source remains the same; the use becomes more precise in the folder structure.
