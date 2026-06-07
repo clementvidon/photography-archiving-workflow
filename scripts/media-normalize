@@ -18,7 +18,9 @@
 #   media-normalize PHONE_CV
 #
 # Supported extensions:
-#   jpg jpeg heic png webp gif dng mov mp4 3gp
+#   jpg jpeg heic png webp gif
+#   dng nef nrw cr2 cr3 crw arw srf sr2 raf rw2 orf ori pef srw x3f rwl 3fr erf mef
+#   mov mp4 3gp
 #
 # Tested target:
 #   GNU/Linux / Ubuntu
@@ -110,7 +112,7 @@ is_video_ext() {
 
 is_raw_ext() {
     case "$1" in
-        dng) return 0 ;;
+        dng|nef|nrw|cr2|cr3|crw|arw|srf|sr2|raf|rw2|orf|ori|pef|srw|x3f|rwl|3fr|erf|mef) return 0 ;;
         *) return 1 ;;
     esac
 }
@@ -166,7 +168,9 @@ print_failure() {
 ###############################################################################
 
 supported_exts=(
-    jpg jpeg heic png webp gif dng mov mp4 3gp
+    jpg jpeg heic png webp gif
+    dng nef nrw cr2 cr3 crw arw srf sr2 raf rw2 orf ori pef srw x3f rwl 3fr erf mef
+    mov mp4 3gp
 )
 
 find_expr=()

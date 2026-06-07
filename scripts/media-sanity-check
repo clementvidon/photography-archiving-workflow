@@ -107,12 +107,13 @@ check_file_by_type() {
             fi
             ;;
 
-        dng)
-            need dcraw
+        dng|nef|nrw|cr2|cr3|crw|arw|srf|sr2|raf|rw2|orf|ori|pef|srw|x3f|rwl|3fr|erf|mef)
             if [ "$MODE" = "deep" ]; then
-                run_check "$file" bash -c 'dcraw -c "$1" >/dev/null' _ "$file"
+                need dcraw_emu
+                run_check "$file" bash -c 'dcraw_emu -c "$1" >/dev/null' _ "$file"
             else
-                run_check "$file" dcraw -i "$file"
+                need raw-identify
+                run_check "$file" raw-identify -v "$file"
             fi
             ;;
 
@@ -167,7 +168,9 @@ log "Mode: $MODE"
 log "Directory: $(pwd)"
 
 supported_exts=(
-    jpg jpeg png webp heic dng gif mp4 mov 3gp
+    jpg jpeg png webp heic gif
+    dng nef nrw cr2 cr3 crw arw srf sr2 raf rw2 orf ori pef srw x3f rwl 3fr erf mef
+    mp4 mov 3gp
 )
 
 find_expr=()

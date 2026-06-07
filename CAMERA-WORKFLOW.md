@@ -4,36 +4,38 @@ This workflow is designed for controlled camera imports, organized by shooting s
 
 ## 1. Import files
 
-Create a local import directory named `MMDD-name`, where `MMDD` is the date of the first photo in the shoot and `name` is a short descriptive slug.
+Create a local import directory named `MMDD-name`, where `MMDD` is the date of the first file in the shoot and `name` is a short descriptive slug.
 
 Examples:
 
 ```text
-0526-palermo-weekend
+0514-palermo-weekend
 ```
 
-Import camera files into this directory.
+Copy the files into it.
 
-> **WARNING** Don't delete the images from your camera right away as a precaution.
+> **Warning:** Do not delete the files from the camera yet.
 
 ## 2. Normalize and check imported files
 
-Clean metadata, rename files, and check that they are readable/decodable.
+Normalize metadata, rename files, and check that they are still readable.
+
+RAW and video files are handled conservatively: useful dates are normalized, but destructive metadata rebuilding is avoided.
 
 Open a terminal inside the import directory and run:
 
 ```bash
-media-normalize CAMERA_CV
+media-normalize CV
 media-sanity-check deep
 ```
 
-I use `CAMERA_CV` prefix for camera files.
+I use `CV` as my initials. Feel free to choose your own filename prefix.
 
-If files are problematic, see `FIXING-FILES.md`.
+If files are problematic, see [`FIXING-FILES.md`](FIXING-FILES.md).
 
 ## 3. Select, edit, and organize archive content
 
-Select and edit the images.
+Select, edit, and export the images.
 
 Keep together everything that belongs to the shoot:
 
@@ -45,13 +47,13 @@ Keep together everything that belongs to the shoot:
 Recommended internal structure:
 
 ```text
-0526-palermo-weekend
-├── CAMERA_CV26_0526_025038_31188070.DNG
-├── CAMERA_CV26_0526_025038_31188070.DNG.xmp
+0514-palermo-weekend
+├── CV26_0514_025038_31188070.DNG
+├── CV26_0514_025038_31188070.DNG.xmp
 ├── exported
-│   └── CAMERA_CV26_0526_025038_31188070.JPG
+│   └── CV26_0514_025038_31188070.JPG
 └── jpg_only
-    └── CAMERA_CV26_0526_034133_32988978.JPG
+    └── CV26_0515_034133_32988978.JPG
 ```
 
 Use `exported` for final exported JPGs.
@@ -69,7 +71,7 @@ Recommended archive structure:
 Camera
 └── 2026
     ├── 0424-vertige-party
-    └── 0526-palermo-weekend
+    └── 0514-palermo-weekend
 ```
 
 ## 5. Optionally add shoot notes
@@ -81,7 +83,7 @@ This keeps the shoot understandable on its own, even if the directory is moved, 
 Example:
 
 ```text
-# 0526-palermo-weekend
+# 0514-palermo-weekend
 
 Short Palermo trip.
 
