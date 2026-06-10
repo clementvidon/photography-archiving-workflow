@@ -6,7 +6,7 @@ It handles camera RAW/JPG imports, sidecar files, exported images, phone photos,
 
 The workflow normalizes filenames, dates, and useful metadata, then checks that files are still readable before originals are deleted.
 
-For the reasoning behind this workflow, read: [A Living Photographic Archive](https://cvidon.com/writing/a-living-photographic-archive/).
+For the reasoning behind this workflow, read: [A Living Visual Archive](https://cvidon.com/writing/a-living-visual-archive/).
 
 Tested on GNU/Linux / Ubuntu for now. macOS is not supported yet, but the workflow should be portable with small shell and dependency adjustments.
 
