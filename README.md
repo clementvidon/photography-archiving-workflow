@@ -2,7 +2,7 @@
 
 Photography Archiving Workflow is intended for photographers who want to keep camera files and personal visual files organized, searchable, and ready for long-term storage.
 
-It handles camera RAW/JPG imports, sidecar files, exported images, phone photos, phone videos, screenshots, and other visual files that belong to a photographic archive.
+It handles camera RAW/JPG imports, sidecar files, exported images, phone photos, phone videos, screenshots, and other visual files that belong to a personal visual archive
 
 The workflow normalizes filenames, dates, and useful metadata, then checks that files are still readable before originals are deleted.
 
