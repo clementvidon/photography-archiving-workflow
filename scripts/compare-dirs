@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+  echo "Usage: $0 [-r|--recursive] <dossier_1> <dossier_2>" >&2
+  exit 1
+}
+
+recursive=false
+
+case "${1:-}" in
+  -r|--recursive)
+    recursive=true
+    shift
+    ;;
+  -h|--help)
+    usage
+    ;;
+esac
+
+[ "$#" -eq 2 ] || usage
+
+dir1="${1%/}"
+dir2="${2%/}"
+
+[ -d "$dir1" ] || {
+  echo "Erreur : '$dir1' n'est pas un dossier valide." >&2
+  exit 1
+}
+
+[ -d "$dir2" ] || {
+  echo "Erreur : '$dir2' n'est pas un dossier valide." >&2
+  exit 1
+}
+
+tmp1="$(mktemp)"
+tmp2="$(mktemp)"
+
+trap 'rm -f "$tmp1" "$tmp2"' EXIT
+
+list_dir() {
+  local dir="$1"
+
+  if "$recursive"; then
+    (
+      cd "$dir"
+      find . -mindepth 1 -print
+    )
+  else
+    (
+      cd "$dir"
+      find . -mindepth 1 -maxdepth 1 -print
+    )
+  fi | LC_ALL=C sort
+}
+
+list_dir "$dir1" > "$tmp1"
+list_dir "$dir2" > "$tmp2"
+
+echo "=== Présent dans dossier 1, absent du dossier 2 ==="
+comm -23 "$tmp1" "$tmp2"
+
+echo
+echo "=== Présent dans dossier 2, absent du dossier 1 ==="
+comm -13 "$tmp1" "$tmp2"

@@ -69,7 +69,7 @@ The normalized filename is the stable baseline. The folder structure can stay si
 Install dependencies:
 
 ```bash
-sudo apt install exiftool ffmpeg jpeginfo pngcheck webp libheif-examples libraw-bin
+sudo apt install libimage-exiftool-perl ffmpeg jpeginfo pngcheck webp libheif-examples libraw-bin dcraw
 ```
 
 Install the workflow tools:

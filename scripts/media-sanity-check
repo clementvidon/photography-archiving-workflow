@@ -18,7 +18,7 @@ usage() {
     echo "Modes:"
     echo "  fast    quick read-only checks; videos use ffprobe only"
     echo "  normal  stronger image checks; videos decode only first 15 seconds"
-    echo "  deep    strongest checks; videos are fully decoded and may take time"
+    echo "  deep    strongest checks; videos and RAW files are fully decoded and may take time"
     exit 1
 }
 
@@ -41,14 +41,15 @@ progress() {
 }
 
 run_check() {
-    local file="$1"
-    shift
+    local label="$1"
+    local file="$2"
+    shift 2
 
     local out="$TMPDIR/check.out"
     ((CHECKS_RUN++))
 
     if ! "$@" >"$out" 2>&1; then
-        log "FAIL: $file"
+        log "FAIL [$label]: $file"
         log "Command: $*"
         cat "$out" >> "$LOGFILE"
         echo >> "$LOGFILE"
@@ -67,7 +68,56 @@ ext_of() {
 check_metadata() {
     local file="$1"
     need exiftool
-    run_check "$file" exiftool -warning -error "$file"
+    run_check "metadata" "$file" exiftool -warning -error "$file"
+}
+
+check_raw_deep() {
+    local file="$1"
+    local rc
+
+    if command -v darktable-cli >/dev/null 2>&1; then
+        local out="$TMPDIR/raw-darktable-${RANDOM}.tif"
+
+        run_check "raw-decode:darktable-cli" "$file" bash -c '
+            infile="$1"
+            outfile="$2"
+
+            darktable-cli "$infile" "$outfile" >/dev/null 2>&1 || exit 1
+
+            if [ ! -s "$outfile" ]; then
+                echo "darktable-cli produced no non-empty output"
+                exit 1
+            fi
+        ' _ "$file" "$out"
+
+        rc=$?
+        rm -f "$out"
+        return "$rc"
+    fi
+
+    if command -v dcraw >/dev/null 2>&1; then
+        local out="$TMPDIR/raw-dcraw-${RANDOM}.ppm"
+
+        run_check "raw-decode:dcraw-stdout" "$file" bash -c '
+            infile="$1"
+            outfile="$2"
+
+            dcraw -c "$infile" >"$outfile" || exit 1
+
+            if [ ! -s "$outfile" ]; then
+                echo "dcraw -c produced no non-empty output"
+                exit 1
+            fi
+        ' _ "$file" "$out"
+
+        rc=$?
+        rm -f "$out"
+        return "$rc"
+    fi
+
+    log "FAIL [raw-decode]: $file"
+    log "No RAW deep decoder found. Install darktable-cli or dcraw."
+    return 1
 }
 
 check_file_by_type() {
@@ -77,53 +127,56 @@ check_file_by_type() {
     case "$ext" in
         jpg|jpeg)
             need jpeginfo
-            run_check "$file" jpeginfo -c "$file"
+            run_check "jpeg" "$file" jpeginfo -c "$file"
             ;;
 
         png)
             need pngcheck
-            run_check "$file" pngcheck -q "$file"
+            run_check "png" "$file" pngcheck -q "$file"
             ;;
 
         webp)
             if [ "$MODE" = "fast" ]; then
                 need webpinfo
-                run_check "$file" webpinfo "$file"
+                run_check "webp-info" "$file" webpinfo "$file"
             else
                 need dwebp
-                run_check "$file" dwebp "$file" -o /dev/null
+                run_check "webp-decode" "$file" dwebp "$file" -o /dev/null
             fi
             ;;
 
         heic)
             if [ "$MODE" = "fast" ]; then
                 need heif-info
-                run_check "$file" heif-info "$file"
+                run_check "heic-info" "$file" heif-info "$file"
             else
                 need heif-convert
-                local out="$TMPDIR/heic-check.png"
-                run_check "$file" heif-convert "$file" "$out"
+                local out="$TMPDIR/heic-check-${RANDOM}.png"
+                local rc
+
+                run_check "heic-decode" "$file" heif-convert "$file" "$out"
+                rc=$?
                 rm -f "$out"
+                return "$rc"
             fi
             ;;
 
         dng|nef|nrw|cr2|cr3|crw|arw|srf|sr2|raf|rw2|orf|ori|pef|srw|x3f|rwl|3fr|erf|mef)
             if [ "$MODE" = "deep" ]; then
-                need dcraw_emu
-                run_check "$file" bash -c 'dcraw_emu -c "$1" >/dev/null' _ "$file"
+                check_raw_deep "$file"
             else
                 need raw-identify
-                run_check "$file" raw-identify -v "$file"
+                run_check "raw-identify" "$file" raw-identify -v "$file"
             fi
             ;;
 
         gif)
             if [ "$MODE" = "fast" ]; then
                 need ffprobe
-                run_check "$file" ffprobe -v error -show_format -show_streams "$file"
+                run_check "gif-probe" "$file" ffprobe -v error -show_format -show_streams "$file"
             else
                 need ffmpeg
-                run_check "$file" ffmpeg -v error -xerror -i "$file" -f null -
+                run_check "gif-decode" "$file" ffmpeg -v error -xerror -i "$file" -f null -
             fi
             ;;
 
@@ -131,18 +184,18 @@ check_file_by_type() {
             case "$MODE" in
                 fast)
                     need ffprobe
-                    run_check "$file" ffprobe -v error -show_format -show_streams "$file"
+                    run_check "video-probe" "$file" ffprobe -v error -show_format -show_streams "$file"
                     ;;
                 normal)
                     need ffprobe
-                    run_check "$file" ffprobe -v error -show_format -show_streams "$file" || return 1
+                    run_check "video-probe" "$file" ffprobe -v error -show_format -show_streams "$file" || return 1
 
                     need ffmpeg
-                    run_check "$file" ffmpeg -v error -xerror -t 15 -i "$file" -f null -
+                    run_check "video-decode-15s" "$file" ffmpeg -v error -xerror -t 15 -i "$file" -f null -
                     ;;
                 deep)
                     need ffmpeg
-                    run_check "$file" ffmpeg -v error -xerror -i "$file" -f null -
+                    run_check "video-decode-full" "$file" ffmpeg -v error -xerror -i "$file" -f null -
                     ;;
             esac
             ;;
